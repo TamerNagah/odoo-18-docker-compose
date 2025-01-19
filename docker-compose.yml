@@ -5,11 +5,14 @@ services:
     user: root
     environment:
       - POSTGRES_USER=odoo
-      - POSTGRES_PASSWORD=odoo18@2024
+      - POSTGRES_PASSWORD=odoo18@2025
       - POSTGRES_DB=postgres
-    restart: always             # run as a service
+    restart: always
     volumes:
-        - ./postgresql:/var/lib/postgresql/data
+      - ./postgresql:/var/lib/postgresql/data
+    networks:
+      odoo18_net:
+        ipv4_address: 172.26.0.2
 
   odoo18:
     image: odoo:18
@@ -18,18 +21,23 @@ services:
       - db
     ports:
       - "10018:8069"
-      - "20018:8072" # live chat
+      - "20018:8072"
     tty: true
     command: --
     environment:
       - HOST=db
       - USER=odoo
-      - PASSWORD=odoo18@2024
+      - PASSWORD=odoo18@2025
     volumes:
-      #- /etc/timezone:/etc/timezone:ro
-      #- /etc/localtime:/etc/localtime:ro
-      # - ./entrypoint.sh:/entrypoint.sh   # if you want to install additional Python packages, uncomment this line!
-      - ./addons:/mnt/extra-addons
+      - ./addons:/mnt/extra-addons         # تعيين سابق (سيكون له أولوية في التحميل إذا سبق في الترتيب)
       - ./etc:/etc/odoo
-    restart: always             # run as a service
-    
+      - /mnt/extra-addons:/mnt/extra-addons  # قد يتعارض مع السطر السابق، راجع الملاحظة أدناه
+      - /mnt/Database_Backup:/DatabaseB
+    restart: always
+    networks:
+      odoo18_net:
+        ipv4_address: 172.26.0.3
+
+networks:
+  odoo18_net:
+    external: true
