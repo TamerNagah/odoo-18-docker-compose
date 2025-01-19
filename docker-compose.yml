@@ -29,10 +29,11 @@ services:
       - USER=odoo
       - PASSWORD=odoo18@2025
     volumes:
-      - ./addons:/mnt/extra-addons         # تعيين سابق (سيكون له أولوية في التحميل إذا سبق في الترتيب)
       - ./etc:/etc/odoo
       - /mnt/extra-addons:/mnt/extra-addons  # قد يتعارض مع السطر السابق، راجع الملاحظة أدناه
       - /mnt/Database_Backup:/DatabaseB
+
+
     restart: always
     networks:
       odoo18_net:
